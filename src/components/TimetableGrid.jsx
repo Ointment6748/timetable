@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useRef } from 'react';
+import React, { useMemo, useEffect, useRef, useState } from 'react';
 import { DndContext, useSensor, useSensors, PointerSensor, TouchSensor } from '@dnd-kit/core';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { useDroppable } from '@dnd-kit/core';
@@ -43,6 +43,27 @@ const TimetableGrid = ({ slots, weekDates, setSlots, onCellClick, onSlotClick, a
 
   const todayIndex = JS_DAY_MAP[new Date().getDay()];
   const todayName = DAYS[todayIndex];
+
+  // Current time indicator
+  const [nowTime, setNowTime] = useState(() => new Date());
+  const [indicatorTop, setIndicatorTop] = useState(null);
+
+  useEffect(() => {
+    const tick = () => setNowTime(new Date());
+    const id = setInterval(tick, 30000); // refresh every 30s
+    return () => clearInterval(id);
+  }, []);
+
+  // Recalculate indicator position whenever time or hours change
+  useEffect(() => {
+    if (currentWeekOffset !== 0) { setIndicatorTop(null); return; }
+    const h = nowTime.getHours();
+    const m = nowTime.getMinutes();
+    const rowEl = document.getElementById(`time-row-${h}`);
+    if (!rowEl) { setIndicatorTop(null); return; }
+    const top = rowEl.offsetTop + (m / 60) * rowEl.offsetHeight;
+    setIndicatorTop(top);
+  }, [nowTime, activeHours, currentWeekOffset]);
 
   useEffect(() => {
     if (scrollToHour !== undefined) {
@@ -111,7 +132,14 @@ const TimetableGrid = ({ slots, weekDates, setSlots, onCellClick, onSlotClick, a
   return (
     <DndContext sensors={sensors} modifiers={[restrictToWindowEdges]} onDragEnd={handleDragEnd}>
       <div className="timetable-container animate-fade-in glass">
-        <div className="timetable-grid" ref={gridRef}>
+        <div className="timetable-grid" ref={gridRef} style={{ position: 'relative' }}>
+          {/* Current time indicator */}
+          {indicatorTop !== null && (
+            <div
+              className="current-time-indicator"
+              style={{ top: `${indicatorTop}px` }}
+            />
+          )}
           {/* Header Row */}
           <div className="grid-header-corner glass-panel">Time</div>
           {DAYS.map((day, i) => {

@@ -639,6 +639,30 @@ textarea {
   background: var(--bg-surface-hover);
 }
 
+/* Current Time Indicator */
+.current-time-indicator {
+  position: absolute;
+  left: 80px; /* aligns after the time label column */
+  right: 0;
+  height: 2px;
+  background: var(--color-primary);
+  z-index: 20;
+  pointer-events: none;
+  box-shadow: 0 0 6px rgba(99, 102, 241, 0.6);
+}
+
+.current-time-indicator::before {
+  content: '';
+  position: absolute;
+  left: -5px;
+  top: -4px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  box-shadow: 0 0 8px rgba(99, 102, 241, 0.8);
+}
+
 @media (max-width: 768px) {
   .hide-mobile {
     display: none;

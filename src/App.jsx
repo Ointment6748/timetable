@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { Plus, Bell, BellOff, LayoutGrid, List } from 'lucide-react';
+import { Plus, Bell, BellOff, LayoutGrid, List, Printer } from 'lucide-react';
 import TimetableGrid from './components/TimetableGrid';
 import Modal from './components/Modal';
 import { DAYS, generateHours, getRandomColor } from './utils/constants';
@@ -337,10 +337,12 @@ function App() {
     return 8;
   }, [activeSlots, currentWeekOffset]);
 
+  const handlePrint = () => window.print();
+
   // ─── Render ───────────────────────────────────────────────────────────────────
 
   return (
-    <div className="layout-container">
+    <div className="layout-container" data-view={showCollapsed ? 'agenda' : 'grid'}>
       <header className="app-header glass">
         <div className="header-left">
           <div>
@@ -397,8 +399,17 @@ function App() {
             <Plus size={20} />
             <span className="hide-mobile">Add Entry</span>
           </button>
+          <button className="icon-btn print-btn" onClick={handlePrint} title="Print / Save as PDF">
+            <Printer size={18} />
+          </button>
         </div>
       </header>
+
+      {/* Print-only header — hidden on screen */}
+      <div className="print-header">
+        <h1>Rag's Timetable</h1>
+        <p>{getWeekLabel()} &nbsp;·&nbsp; {weekDates[0]} – {weekDates[6]}</p>
+      </div>
 
       {dbError && (
         <div className="db-error-banner">
