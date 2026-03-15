@@ -9,7 +9,7 @@ import { supabase } from './lib/supabase';
 const playChime = () => {
   const AudioContext = window.AudioContext || window.webkitAudioContext;
   if (!AudioContext) return;
-  
+
   const ctx = new AudioContext();
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
@@ -17,14 +17,14 @@ const playChime = () => {
   osc.type = 'sine';
   osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
   osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.1); // A5
-  
+
   gain.gain.setValueAtTime(0, ctx.currentTime);
   gain.gain.linearRampToValueAtTime(0.5, ctx.currentTime + 0.05);
   gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.5);
-  
+
   osc.connect(gain);
   gain.connect(ctx.destination);
-  
+
   osc.start(ctx.currentTime);
   osc.stop(ctx.currentTime + 1.5);
 };
@@ -347,9 +347,8 @@ function App() {
         <div className="header-left">
           <div>
             <h1 className="heading-gradient">Rag's Timetable</h1>
-            <p className="subtitle">Drag, drop, and organize your week efficiently.</p>
           </div>
-          
+
           <div className="week-nav glass-panel">
             <button className="icon-btn" onClick={() => setCurrentWeekOffset(prev => prev - 1)} aria-label="Previous Week">
               &larr;
@@ -370,7 +369,7 @@ function App() {
           >
             {notificationsEnabled ? <Bell size={18} /> : <BellOff size={18} />}
           </button>
-          
+
           <div className="toggle-group glass-panel">
             <button
               className={`toggle-btn ${!showCollapsed ? 'active' : ''}`}
@@ -407,7 +406,6 @@ function App() {
 
       {/* Print-only header — hidden on screen */}
       <div className="print-header">
-        <h1>Rag's Timetable</h1>
         <p>{getWeekLabel()} &nbsp;·&nbsp; {weekDates[0]} – {weekDates[6]}</p>
       </div>
 
